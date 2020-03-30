@@ -1,0 +1,492 @@
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Vector;
+
+
+import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BEncoderStream;
+
+import lotus.domino.Database;
+import lotus.domino.Document;
+import lotus.domino.MIMEEntity;
+import lotus.domino.MIMEHeader;
+
+//import lotus.domino.NotesException;
+
+import lotus.domino.NotesFactory;
+import lotus.domino.Session;
+import lotus.domino.Stream;
+
+//import lotus.domino.View;
+
+ 
+
+
+public class correoBase {
+
+             
+
+              public static final String enviar(String para, String responsable, String compania, String usuario, String copia, String copia1, String copia2, String copia3,
+
+                                         String copia4, String copia5, String copia6,
+                                         String titulo, String connet, String conpol, String tipo, String deppro, String depproOrg, String rmonom, String atte, String respro, String asgrdo,
+                                         String mdadscs, String polced, String descatp, String hascatp, String prmpro, String recced, String cesced) {
+
+                                                                     
+
+                             
+
+                            String prueba = "carlos.vargas@provincialre.com";
+                            final boolean debug_mode = true;// en true imprime log
+
+
+
+                            try {
+
+                                         if (debug_mode)
+
+                                                       System.out.println("************ correoBase ******************* ");
+
+                                                       System.out.println("************ tipo ******************* " + tipo);
+
+                                         Session session = NotesFactory.createSession();                                                         
+
+ 
+
+                                         acceso = "Para tener acceso a dicha notificación y poder visualizar todos sus datos, por favor haga click en el siguiente link: <br><br>" +
+
+                                                         "http://www.provincialre.net/Reaseguro/ProNet.nsf/n_detalle_noti.xsp?id=" + connet + "&T="+ tipo + "<br><br>";
+
+ 
+
+                                         if (debug_mode){
+
+                                         System.out.println("CONNET   : " + connet);
+
+                                         System.out.println("TIPO     : " + tipo);
+
+                                         System.out.println("CONPOL   : " + conpol);
+
+                                         System.out.println("DEPPRO   : " + deppro);
+
+                                         System.out.println("DEPPROORG: " + depproOrg);
+
+                                         System.out.println("COPIA    : " + copia);
+
+                                         System.out.println("COPIA1   : " + copia1);
+
+                                         System.out.println("COPIA2   : " + copia2);
+
+                                         System.out.println("COPIA3   : " + copia3);
+
+                                         System.out.println("COPIA4   : " + copia4);
+
+                                         System.out.println("COPIA5   : " + copia5);
+
+                                         System.out.println("COPIA6   : " + copia6);                                        
+
+                                         }
+
+                                        
+
+                                         if (deppro.equals("COBRANZA")){deppro = null;}
+
+                                         if (depproOrg.equals("COBRANZA")){depproOrg = null;}
+
+                                        
+
+                                         if (tipo.equals("C")){
+
+                                                       subject = titulo + " " + deppro.toUpperCase() + " " + rmonom + " // Solicitante " + respro.toUpperCase();
+
+                                                       }
+
+                                         if (tipo.equals("N") || tipo.equals("R") || tipo.equals("CT")){
+
+                                                       subject = titulo + " " + deppro.toUpperCase() + " " + rmonom + " // Asegurado " + asgrdo.toUpperCase();
+
+                                                       }
+
+                                        
+
+                                         if (tipo.equals("CB") || tipo.equals("PZ") || tipo.equals("GR")){
+
+                                                       subject = titulo + " " + depproOrg.toUpperCase() + " " + rmonom + " // Asegurado " + asgrdo.toUpperCase();
+
+                                                       }                                       
+
+                                        
+
+                                         if (tipo.equals("C")) {
+
+                                                       cuerpo = "Gracias por su amable oferta del riesgo indicado en la referencia. Al respecto le informamos que en el Sistema Electrónico de Reaseguro (S.E.R.) " +
+
+                                                                "de nuestra página web se encuentra disponible la cotización Nº " + conpol + ".<br><br>" + acceso;
+
+                                                       }
+
+                                        
+
+                                         if (tipo.equals("CT")) {
+
+                                                       cuerpo = "Mediante la presente le informamos que hemos procesado los términos y condiciones de renovación del riesgo indicado en la referencia. " +
+
+                                                                                   "Los mismos se encuentran disponibles en el Sistema Electrónico de Reaseguro (S.E.R) de nuestra página web bajo la cotización Nº  " + conpol + ".<br><br>" + acceso;
+
+                                                       }
+
+                                        
+
+                                         if (tipo.equals("N") || tipo.equals("R")) {
+
+                                                       cuerpo = "Mediante la presente confirmamos respaldo en firme del riesgo indicado en la referencia el cual se encuentra disponible en el Sistema Electrónico " +
+
+                                                                "de Reaseguro (S.E.R) de nuestra página web bajo la nota de cobertura Nº " + conpol + ".<br><br>" + acceso;
+
+                                                       }
+
+                                        
+
+                                         if (tipo.equals("PZ")) {
+
+                                                       cuerpo = "Mediante la presente informamos la anulación del riesgo indicado en la referencia bajo la nota de cobertura Nº " + conpol + ", en vista de que todas las cesiones de reaseguro asociadas, se encuentran anuladas"+".<br><br>" +
+
+                             "<b>Moneda:         " + mdadscs + " " + "</b><br><br>" +
+
+              //                   "Asegurado:         " + asgrdo.toUpperCase()+ " " + ".<br>" +
+
+              //                   "Prima Bruta:       " + prmpro + " " + ".<br>" +
+
+                                     "Vigencia:          " + descatp + " / " + hascatp + ".<br>" +
+
+                                     "Póliza Cedente:    " + polced + ".<br>" +
+
+                                     "Cesión Cedente:    " + cesced + ".<br>" +
+
+                                     "Recibo Cedente:    " + polced + ".<br><br>";
+
+                                         }
+
+                                        
+
+                                         if (tipo.equals("CB") || tipo.equals("GR")) {
+
+                                                       cuerpo = "Mediante la presente informamos la anulación del riesgo indicado en la referencia bajo la nota de cobertura Nº " + conpol + ", por haberse vencido la garantía de pago. "+".<br><br>" +
+
+                                                         "<b>Moneda:         " + mdadscs + " " + "</b><br><br>" +
+
+                                                                "Asegurado:         " + asgrdo.toUpperCase()+ " " + ".<br>" +
+
+                                                                "Prima Bruta:       " + prmpro + " " + ".<br>" +
+
+                                                                "Vigencia:          " + descatp + " / " + hascatp + ".<br>" +
+
+                                                                "Póliza Cedente:    " + polced + ".<br>" +
+
+                                                                "Cesión Cedente:    " + cesced + ".<br>" +
+
+                                                                "Recibo Cedente:    " + polced + ".<br><br>";
+
+                                                       }
+
+                                        
+
+                                        
+
+                                         Stream stream = session.createStream();
+
+                                         session.setConvertMIME(false); // Do not convert MIME to RT
+
+ 
+
+                                         Database db = session.getCurrentDatabase();
+
+ 
+
+                                         Document memo = db.createDocument();
+
+                                         memo.replaceItemValue("Form", "Memo");
+
+ 
+
+                                         MIMEEntity body = memo.createMIMEEntity();
+
+                                         MIMEHeader header = body.createHeader("Subject");
+
+ 
+
+                            //           subject = correoBase.escapeHTML(subject);
+
+                            //           header.setHeaderVal("=?ISO-8859-1?Q?" + subject + "?=");
+
+ 
+
+                                         StringBuffer buf = new StringBuffer();
+
+                                         utfbase64Encoding(subject, buf);
+
+                                         header.setHeaderVal(buf.toString());
+
+ 
+
+                                         // para
+
+                                         Vector v = new Vector();
+
+                                         v.addElement(prueba);
+
+/*                                      v.addElement(para); --> PARA PRODUCCION
+
+                                         v.addElement(copia);
+
+                                         v.addElement(copia1);
+
+                                         v.addElement(copia2);
+
+                                         v.addElement(copia3);
+
+                                         v.addElement(copia4);
+
+                                         v.addElement(copia5);
+
+                                         v.addElement(copia6);                            
+
+                                         */                                                                              
+
+ 
+
+                                         header = body.createHeader("To");
+
+ 
+
+                                         // SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
+
+ 
+
+//                                      Set keys = map.keySet();
+
+ 
+
+                            /*          for (Iterator i = keys.iterator(); i.hasNext();) {
+
+                                                       String key = (String) i.next();
+
+                                                       String value = (String) map.get(key);
+
+                                                       html = html.replace(key, value);*/
+
+ 
+
+                                        
+
+                                         {html =
+
+                                         "-------------------------------" +        "<br>" +
+
+                                         "Para  : " + para + "<br>" +
+
+                                         "Copia : " + copia + "<br>" +
+
+                                         "Copia1: " + copia1 + "<br>" +
+
+                                         "Copia2: " + copia2 + "<br>" +
+
+                                         "Copia3: " + copia3 + "<br>" +
+
+                                         "Copia4: " + copia4 + "<br>" +
+
+                                         "Copia5: " + copia5 + "<br>" +
+
+                                         "Copia6: " + copia6 + "<br>" +
+
+                                         "-------------------------------" + "<br>" +                                              
+
+                                                      
+
+                                         "Sres. " + compania + ",<br>" +
+
+                                                      
+
+                                         "Estimado Sr.(a) " + responsable + ",<br><br>" + cuerpo +   
+
+ 
+
+/*                                      "Se le informa que en nuestra página web Sistema Electrónico de Reaseguros (S.E.R.) se encuentra disponible la notificación correspondiente a la " + titulo + " No: " + conpol + ".<br><br>" +*/                                 
+
+                                        
+
+/*                                      "Para tener acceso a dicha notificación y poder visualizar todos sus datos, por favor haga click en el siguiente link: <br><br>" +
+
+ 
+
+                                "http://www.provincialre.net/Reaseguro/ProNet.nsf/n_detalle_noti.xsp?id=" + connet + "&T="+ tipo + "<br><br>"+*/
+
+ 
+
+                                         "Agradecidos por su recepción,<br><br>"  + 
+
+ 
+
+ 
+
+                                         "Saludos cordiales,<br><br>"  + 
+
+ 
+
+                                         "<b>Provincial de Reaseguros, C.A.</b><br>"  + 
+
+                                         "<font size=2 color=#237D94>Correo generado de forma automática por el sistema S.E.R, por favor no responda este correo.</font>";                                   
+
+//*****************************************************************************************************************
+
+                                         }
+
+ 
+
+                                         stream.writeText(html);
+
+                                         body.setContentFromText(stream, "text/html;charset=ISO-8859-1",
+
+                                                                     MIMEEntity.ENC_NONE);
+
+ 
+
+                                         memo.setEncryptOnSend(false);
+
+                                         memo.setSaveMessageOnSend(false);
+
+                                         memo.send(false, v);
+
+                                         //memo.s
+
+                                         session.setConvertMIME(true);
+
+                                         if (debug_mode)
+
+                                                       System.out
+
+                                                                                   .println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>correo enviado");
+
+ 
+
+                            } catch (Exception e) {
+
+                                         e.printStackTrace();
+
+                            }
+
+                            return null;
+
+              }
+
+             
+
+/*         
+
+              private static String escapeHTML(String subject) {
+
+                            // TODO Auto-generated method stub
+
+                            return null;
+
+              }*/
+
+ 
+
+ 
+
+              /*public static final String obtenerTemplate (String nombreTemplate, String template) {
+
+                           
+
+                            try {
+
+                                         Session session = NotesFactory.createSession();
+
+                                         Database db = session.getCurrentDatabase();
+
+ 
+
+                                           View view = db.getView("Parametros\\V_EmailTemplates");
+
+                                           Vector clave = new Vector();
+
+                                           clave.addElement(nombreTemplate);
+
+                                           Document docTemplate = view.getDocumentByKey(clave, false);
+
+                                           if (docTemplate != null) {
+
+                                                         template = template.replace("{{titulo}}",docTemplate.getItemValueString("Titulo"));
+
+                                                         template = template.replace("{{header}}",docTemplate.getItemValueString("Header"));
+
+                                                         template = template.replace("{{body}}",docTemplate.getItemValueString("Body"));
+
+                                                        
+
+                                           }
+
+                            } catch (NotesException e) {
+
+                                         e.printStackTrace();
+
+                            }
+
+                    return template;
+
+              }*/
+
+             
+
+ 
+
+              public static void utfbase64Encoding(String string, StringBuffer buf)
+
+                                         throws UnsupportedEncodingException {
+
+                            String charset = "UTF-8";
+
+                            String prefix = "=?UTF-8?B?";
+
+                            byte[] bytesRead = string.getBytes(charset);
+
+                            BEncoderStream.encodedLength(bytesRead);
+
+                            ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
+
+                            OutputStream out;
+
+ 
+
+                            out = new BEncoderStream(byteOutput);
+
+ 
+
+                            try {
+
+                                         out.write(bytesRead);
+
+                                         out.close();
+
+                            } catch (Exception ioex) {
+
+                            }
+
+                            byte[] encodedBytes = byteOutput.toByteArray();
+
+ 
+
+                            buf.append(prefix);
+
+                            for (int i = 0; i < encodedBytes.length; ++i)
+
+                                         buf.append((char) encodedBytes[i]);
+
+                            buf.append("?=");
+
+              }
+
+ 
+
+}
